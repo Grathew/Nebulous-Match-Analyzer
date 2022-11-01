@@ -49,13 +49,13 @@ if SettingsDict["DebugMode"] == "yes":
     print("SettingsDict")
     pprint(SettingsDict)
 
-savesPath = SettingsDict["NebulousPath"] + "\\saves"
-if os.path.exists(savesPath):
+SavesPath = SettingsDict["NebulousPath"] + "\\saves"
+if os.path.exists(SavesPath):
     if SettingsDict["DebugMode"] == "yes":
         print("debugging file search")
-        print(savesPath)
+        print(SavesPath)
         print("walking though saves looking for files")
-        for(root, dirs, file) in os.walk(savesPath):
+        for(root, dirs, file) in os.walk(SavesPath):
             for f in file:
                 if '.fleet' in f:
                     print("Fleet found " + f)
@@ -65,7 +65,61 @@ if os.path.exists(savesPath):
                     print("Ship found " + f)
                 if '.xml' in f:
                     print("Report found " + f)
+        print("Check and see if it has found everything you'd expect. If not yell at Grathew. He's on the Nebulous Discord or the Git.")
 else:
-    print("Could not find file tree. Please check your settings file and varify your Nebulous Instal location.")
+    print("Could not find required file tree. Please check your settings file and varify your Nebulous location.")
 
 
+#open and read Fleets
+FleetPath = SavesPath + "\\Fleets"
+if os.path.exists(FleetPath):
+    FleetFolder = os.walk(FleetPath)
+    FleetFiles = []
+    for root, dirs, files in FleetFolder:
+        for name in files:
+            if name.endswith('.fleet'):
+                FleetFiles.append(name)
+else:
+    print("Could not find the Fleets folder. Please check your Nebulous\\Saves for the Fleets folder.") 
+    
+    #open and read Missle Templates
+MissilePath = SavesPath + "\\MissileTemplates"
+if os.path.exists(MissilePath):
+    MissileFolder = os.listdir(MissilePath)
+    MissileFiles = []
+    for f in range(len(MissileFolder)):
+        if MissileFolder[f].endswith('.missile'):
+            MissileFiles.append(MissileFolder[f])
+else:
+    print("Could not find the MissileTemplates folder. Please check your Nebulous\\Saves for the MissileTemplates folder.") 
+
+#open and read ships
+ShipPath = SavesPath + "\\ShipTemplates"
+if os.path.exists(ShipPath):
+    ShipFolder = os.listdir(ShipPath)
+    ShipFiles = []
+    for f in range(len(ShipFolder)):
+        if ShipFolder[f].endswith('.ship'):
+            ShipFiles.append(ShipFolder[f])
+else:
+    print("Could not find the Fleets folder. Please check your Nebulous\\Saves for the ShipTemplates folder.")
+    
+#open and read Battle Reports
+ReportPath = SavesPath + "\\SkirmishReports"
+if os.path.exists(ReportPath):
+    ReportFolder = os.listdir(ReportPath)
+    ReportFiles = []
+    for f in range(len(ReportFolder)):
+        if ReportFolder[f].endswith('.xml'):
+            ReportFiles.append(ReportFolder[f])
+else:
+    print("Could not find the Fleets folder. Please check your Nebulous\\Saves for the SkirmishReports folder.")
+
+print("Fleets")
+pprint(FleetFiles)
+print("Missiles")
+pprint(MissileFiles)
+print("Ships")
+pprint(ShipFiles)
+print("Reports")   
+pprint(ReportFiles)
