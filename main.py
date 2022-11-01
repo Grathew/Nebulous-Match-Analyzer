@@ -121,97 +121,163 @@ if SettingsDict["MissileJson"] == "yes":
             if not os.path.exists(SettingsDict["OutputPath"] + "\\Missiles"):
                 os.mkdir(SettingsDict["OutputPath"] + "\\Missiles")
             WorkingOutput = open(SettingsDict["OutputPath"] + "\\Missiles" + "\\" + missile.split(".")[0] + ".txt", "w")
-            for line in WorkingFile:
-                if line.__contains__("Designation"):
-                    data = line.split(">")[1]
+            WorkingFileLines = WorkingFile.readlines()
+            lineNumber = 0
+            while lineNumber < len(WorkingFileLines):
+                if WorkingFileLines[lineNumber].__contains__("Designation"):
+                    data = WorkingFileLines[lineNumber].split(">")[1]
                     data = data.split("<")[0]
                     MissileDict["Designation"] = data
                 
-                if line.__contains__("Nickname"):
-                    data = line.split(">")[1]
+                if WorkingFileLines[lineNumber].__contains__("Nickname"):
+                    data = WorkingFileLines[lineNumber].split(">")[1]
                     data = data.split("<")[0]
                     MissileDict["Nickname"] = data
                 
-                if line.__contains__("cost"):
-                    data = line.split(">")[1]
+                if WorkingFileLines[lineNumber].__contains__("Cost"):
+                    data = WorkingFileLines[lineNumber].split(">")[1]
                     data = data.split("<")[0]
-                    MissileDict["cost"] = data
+                    MissileDict["Cost"] = data
 
-                if line.__contains__("BodyKey"):
-                    data = line.split(">")[1]
+                if WorkingFileLines[lineNumber].__contains__("BodyKey"):
+                    data = WorkingFileLines[lineNumber].split(">")[1]
                     data = data.split("<")[0]
                     MissileDict["Body"] = data
                     
-                if line.__contains__("<MissileSocket>"):
-                    while not line.__contains__("</MissileSocket>"):
+                if WorkingFileLines[lineNumber].__contains__("<MissileSocket>"):
+                    while not WorkingFileLines[lineNumber].__contains__("</MissileSocket>"):
+                        if SettingsDict["DebugMode"] == "yes":
+                            print("Missile Socket Loop")
                         SocketDict = {}
-                        if line.__contains__("Size"):
-                            data = line.split(">")[1]
+                        if WorkingFileLines[lineNumber].__contains__("Size"):
+                            data = WorkingFileLines[lineNumber].split(">")[1]
                             data = data.split("<")[0]
-                            SocketDict["size"] = data
+                            SizeData = data
 
-                        if line.__contains__("ActiveSeekerSettings"):
-                            ActiveSeekerDict = {"Type":"Active Seeker"}
-                            while not line.__contains__("</InstalledComponent>"):
-                                if line.__contains__("ComponentKey"):
-                                    data = line.split(">")[1]
-                                    data = data.split("<")[0]
-                                    ActiveSeekerDict["Component Name"] = data
-
-                                if line.__contains__("Mode"):
-                                    data = line.split(">")[1]
-                                    data = data.split("<")[0]
-                                    ActiveSeekerDict["Mode"] = data                            
-                                
-                                if line.__contains__("RejectUnvalidated"):
-                                    data = line.split(">")[1]
-                                    data = data.split("<")[0]
-                                    ActiveSeekerDict["Reject Unvalidated"] = data
-
-                                if line.__contains__("DetectPDTargets"):
-                                    data = line.split(">")[1]
-                                    data = data.split("<")[0]
-                                    ActiveSeekerDict["Detect Point Defence Targets"] = data                            
-                                line = WorkingFile.readline()
+                        if WorkingFileLines[lineNumber].__contains__("InstalledComponent"):
                             
-                                SocketDict["Seeker"] = ActiveSeekerDict
-                            
-                        if line.__contains__("DirectGuidanceSettings"):
-                            GuidenceDict = {"Type":"Direct Guidence"}
-                            while not line.__contains__("</InstalledComponent>"):
-                                if line.__contains__("ComponentKey"):
-                                    data = line.split(">")[1]
-                                    data = data.split("<")[0]
-                                    GuidenceDict["Component Name"] = data
+                            if WorkingFileLines[lineNumber].__contains__("SeekerSettings"):
 
-                                if line.__contains__("Role"):
-                                    data = line.split(">")[1]
-                                    data = data.split("<")[0]
-                                    GuidenceDict["Role"] = data                            
-                                
-                                if line.__contains__("HotLaunch"):
-                                    data = line.split(">")[1]
-                                    data = data.split("<")[0]
-                                    GuidenceDict["Hot Launch"] = data
-
-                                if line.__contains__("SelfDestructOnLost"):
-                                    data = line.split(">")[1]
-                                    data = data.split("<")[0]
-                                    GuidenceDict["Self Destruct On Lost"] = data    
+                                if WorkingFileLines[lineNumber].__contains__("Active"):
+                                    ActiveSeekerDict = {"Type":"Active Seeker"}
+                                elif WorkingFileLines[lineNumber].__contains__("Passive"):
+                                    ActiveSeekerDict = {"Type":"Passive Seeker"}
+                                elif WorkingFileLines[lineNumber].__contains__("Command"):
+                                    ActiveSeekerDict = {"Type":"Command Control"}
+                                else:
+                                    ActiveSeekerDict = {"Type":"ERROR"}
+                                ActiveSeekerDict["Component Size"] = SizeData
+                                while not WorkingFileLines[lineNumber].__contains__("</InstalledComponent>"):
+                                    if SettingsDict["DebugMode"] == "yes":
+                                        print("Seeker Loop")
+                                        print(WorkingFileLines[lineNumber])
                                     
-                                if line.__contains__("Maneuvers"):
-                                    data = line.split(">")[1]
-                                    data = data.split("<")[0]
-                                    GuidenceDict["Termnal Maneuvers"] = data                                    
-                                line = WorkingFile.readline()
-                    
-                    MissileDict["Sockets"].append(SocketDict)                    
-                    line = WorkingFile.readline()
+                                    if WorkingFileLines[lineNumber].__contains__("ComponentKey"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        ActiveSeekerDict["Component Name"] = data
 
+                                    if WorkingFileLines[lineNumber].__contains__("Mode"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        ActiveSeekerDict["Mode"] = data                            
+                                    
+                                    if WorkingFileLines[lineNumber].__contains__("RejectUnvalidated"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        ActiveSeekerDict["Reject Unvalidated"] = data
 
+                                    if WorkingFileLines[lineNumber].__contains__("DetectPDTargets"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        ActiveSeekerDict["Detect Point Defence Targets"] = data                            
+                                    lineNumber = lineNumber + 1
+                                
+                                    SocketDict["Seeker"] = ActiveSeekerDict
+                                    
+                            elif WorkingFileLines[lineNumber].__contains__("GuidanceSettings"):
+                                if WorkingFileLines[lineNumber].__contains__("Direct"):
+                                    GuidenceDict = {"Type":"Direct"}
+                                elif WorkingFileLines[lineNumber].__contains__("Cruise"):
+                                    GuidenceDict = {"Type":"Cruise"}
+                                else:
+                                    GuidenceDict = {"Type":"ERROR"}
+                                GuidenceDict["Component Size"] = SizeData
+                                
+                                while not WorkingFileLines[lineNumber].__contains__("</InstalledComponent>"):
+                                    if SettingsDict["DebugMode"] == "yes":
+                                        print("Direct Guidence Loop")
+                                   
+                                    if WorkingFileLines[lineNumber].__contains__("ComponentKey"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        GuidenceDict["Component Name"] = data
+
+                                    if WorkingFileLines[lineNumber].__contains__("Role"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        GuidenceDict["Role"] = data                            
+                                    
+                                    if WorkingFileLines[lineNumber].__contains__("HotLaunch"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        GuidenceDict["Hot Launch"] = data
+
+                                    if WorkingFileLines[lineNumber].__contains__("SelfDestructOnLost"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        GuidenceDict["Self Destruct On Lost"] = data    
+                                        
+                                    if WorkingFileLines[lineNumber].__contains__("Maneuvers"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        GuidenceDict["Termnal Maneuvers"] = data                                    
+                                    lineNumber = lineNumber + 1
+                                SocketDict["Guidence"] = GuidenceDict
+                            elif WorkingFileLines[lineNumber].__contains__("MissileEngineSettings"):
+                                EngineDict ={"Component Size":SizeData}
+                                if SettingsDict["DebugMode"] == "yes":
+                                    print("Found an Engine")
+                                while not WorkingFileLines[lineNumber].__contains__("</InstalledComponent>"):
+                                    if SettingsDict["DebugMode"] == "yes":
+                                        print("Engine Loop")
+                                    if WorkingFileLines[lineNumber].__contains__("<A>"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        EngineDict["Range"]= data  
+                                    if WorkingFileLines[lineNumber].__contains__("<B>"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        EngineDict["Speed"] = data  
+                                    if WorkingFileLines[lineNumber].__contains__("<C>"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        EngineDict["Maneuverability"] = data
+                                    lineNumber = lineNumber + 1
+                                SocketDict["Engine"] = EngineDict
+                            else:
+                                AuxComponentDict ={"Component Size":SizeData}
+                                if SettingsDict["DebugMode"] == "yes":
+                                    print("Found Something Else")
+                                while not WorkingFileLines[lineNumber].__contains__("</InstalledComponent>"):
+                                
+                                    if WorkingFileLines[lineNumber].__contains__("ComponentKey"):
+                                        data = WorkingFileLines[lineNumber].split(">")[1]
+                                        data = data.split("<")[0]
+                                        name = data 
+                                    lineNumber = lineNumber + 1
+                                SocketDict[name] = AuxComponentDict
+                        lineNumber = lineNumber + 1
+                        if len(SocketDict) > 0:
+                            MissileDict["Sockets"].append(SocketDict)                    
+  
+                lineNumber = lineNumber + 1
             json.dump(MissileDict,WorkingOutput)
+            WorkingOutput.close()
 
         print("\n")
+        
+        
     else:
         print("Could not find the MissileTemplates folder. Please check your Nebulous\\Saves for the MissileTemplates folder.") 
 
