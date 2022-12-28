@@ -1,7 +1,7 @@
 '''
 Nebulous Fleet Command Battle Report Analyzer
 Author: Grathew
-11/1/2022
+12/28/2022
 Version 0.0.1
 
 This program will read in the battle reports from Nebulous Fleet Command 
@@ -294,6 +294,9 @@ if SettingsDict["ShipJson"] == "yes":
             print("Ships")
             pprint(ShipFiles)
             print("\n")
+        '''
+        read and .json saved ships, cross reference with fleets. Store stats, on the ship per ship level. 
+        '''
     else:
         print("Could not find the Fleets folder. Please check your Nebulous\\Saves for the ShipTemplates folder.")
         
