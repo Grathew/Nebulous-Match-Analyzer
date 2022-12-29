@@ -3,7 +3,6 @@ Splitting off Missle segment into it's own file for sanity's sake.
 12/28/2022
 '''
 def basicInfo(MissileFile, MisslieDict):
-    missle dict
     if WorkingFileLines[lineNumber].__contains__("Designation"):
         data = WorkingFileLines[lineNumber].split(">")[1]
         data = data.split("<")[0]
@@ -26,7 +25,7 @@ def basicInfo(MissileFile, MisslieDict):
     return MissileDict
 
 
-def SeekerHead():
+def SeekerHead(MissleFile, MissileDict):
     if WorkingFileLines[lineNumber].__contains__("<MissileSocket>"):
         while not WorkingFileLines[lineNumber].__contains__("</MissileSocket>"):
             if SettingsDict["DebugMode"] == "yes":
@@ -78,49 +77,49 @@ def SeekerHead():
                     
                         SocketDict["Seeker"] = ActiveSeekerDict
 
-def GuidenceSystem():         
-    elif WorkingFileLines[lineNumber].__contains__("GuidanceSettings"):
-    if WorkingFileLines[lineNumber].__contains__("Direct"):
-        GuidenceDict = {"Type":"Direct"}
-    elif WorkingFileLines[lineNumber].__contains__("Cruise"):
-        GuidenceDict = {"Type":"Cruise"}
-    else:
-        GuidenceDict = {"Type":"ERROR"}
-    GuidenceDict["Component Size"] = SizeData
+def GuidenceSystem(MissileFile, MissileDict):         
+    if WorkingFileLines[lineNumber].__contains__("GuidanceSettings"):
+        if WorkingFileLines[lineNumber].__contains__("Direct"):
+            GuidenceDict = {"Type":"Direct"}
+        elif WorkingFileLines[lineNumber].__contains__("Cruise"):
+            GuidenceDict = {"Type":"Cruise"}
+        else:
+            GuidenceDict = {"Type":"ERROR"}
+        GuidenceDict["Component Size"] = SizeData
 
-    while not WorkingFileLines[lineNumber].__contains__("</InstalledComponent>"):
-        if SettingsDict["DebugMode"] == "yes":
-            print("Direct Guidence Loop")
-        
-        if WorkingFileLines[lineNumber].__contains__("ComponentKey"):
-            data = WorkingFileLines[lineNumber].split(">")[1]
-            data = data.split("<")[0]
-            GuidenceDict["Component Name"] = data
-
-        if WorkingFileLines[lineNumber].__contains__("Role"):
-            data = WorkingFileLines[lineNumber].split(">")[1]
-            data = data.split("<")[0]
-            GuidenceDict["Role"] = data                            
-        
-        if WorkingFileLines[lineNumber].__contains__("HotLaunch"):
-            data = WorkingFileLines[lineNumber].split(">")[1]
-            data = data.split("<")[0]
-            GuidenceDict["Hot Launch"] = data
-
-        if WorkingFileLines[lineNumber].__contains__("SelfDestructOnLost"):
-            data = WorkingFileLines[lineNumber].split(">")[1]
-            data = data.split("<")[0]
-            GuidenceDict["Self Destruct On Lost"] = data    
+        while not WorkingFileLines[lineNumber].__contains__("</InstalledComponent>"):
+            if SettingsDict["DebugMode"] == "yes":
+                print("Direct Guidence Loop")
             
-        if WorkingFileLines[lineNumber].__contains__("Maneuvers"):
-            data = WorkingFileLines[lineNumber].split(">")[1]
-            data = data.split("<")[0]
-            GuidenceDict["Termnal Maneuvers"] = data                                    
-        lineNumber = lineNumber + 1
-    SocketDict["Guidence"] = GuidenceDict
+            if WorkingFileLines[lineNumber].__contains__("ComponentKey"):
+                data = WorkingFileLines[lineNumber].split(">")[1]
+                data = data.split("<")[0]
+                GuidenceDict["Component Name"] = data
 
-def EngineSettings():
-    elif WorkingFileLines[lineNumber].__contains__("MissileEngineSettings"):
+            if WorkingFileLines[lineNumber].__contains__("Role"):
+                data = WorkingFileLines[lineNumber].split(">")[1]
+                data = data.split("<")[0]
+                GuidenceDict["Role"] = data                            
+            
+            if WorkingFileLines[lineNumber].__contains__("HotLaunch"):
+                data = WorkingFileLines[lineNumber].split(">")[1]
+                data = data.split("<")[0]
+                GuidenceDict["Hot Launch"] = data
+
+            if WorkingFileLines[lineNumber].__contains__("SelfDestructOnLost"):
+                data = WorkingFileLines[lineNumber].split(">")[1]
+                data = data.split("<")[0]
+                GuidenceDict["Self Destruct On Lost"] = data    
+                
+            if WorkingFileLines[lineNumber].__contains__("Maneuvers"):
+                data = WorkingFileLines[lineNumber].split(">")[1]
+                data = data.split("<")[0]
+                GuidenceDict["Termnal Maneuvers"] = data                                    
+            lineNumber = lineNumber + 1
+        SocketDict["Guidence"] = GuidenceDict
+
+def EngineSettings(MissileFile, MissileDict):
+    if WorkingFileLines[lineNumber].__contains__("MissileEngineSettings"):
         EngineDict ={"Component Size":SizeData}
         if SettingsDict["DebugMode"] == "yes":
             print("Found an Engine")
@@ -142,7 +141,7 @@ def EngineSettings():
             lineNumber = lineNumber + 1
         SocketDict["Engine"] = EngineDict
 
-def MissileCatchall():
+def MissileCatchall(MissileFile, MissileDict):
     AuxComponentDict ={"Component Size":SizeData}
     if SettingsDict["DebugMode"] == "yes":
         print("Found Something Else")
